@@ -100,20 +100,20 @@ def abrir_imagem(imagem_binaria, ee_selecionado):
     imagem_abertura = erodir_imagem(imagem_binaria, ee_selecionado)
 
     # Segundo passo (dilatar imagem)
-    imagem_abertura = dilatar_imagem(imagem_binaria, ee_selecionado)
+    imagem_abertura = dilatar_imagem(imagem_abertura, ee_selecionado)
 
     return imagem_abertura
 
 
-def fechar_imagem(imagem_binaria):
+def fechar_imagem(imagem_binaria, ee_selecionado):
 
     imagem_fechamento = np.zeros_like(imagem_binaria)
 
     # Primeiro passo (Erodir imagem)
-    imagem_fechamento = erodir_imagem(imagem_binaria)
+    imagem_fechamento = erodir_imagem(imagem_binaria, ee_selecionado)
 
     # Segundo passo (dilatar imagem)
-    imagem_fechamento = dilatar_imagem(imagem_binaria)
+    imagem_fechamento = dilatar_imagem(imagem_fechamento, ee_selecionado)
 
     return imagem_fechamento
 
