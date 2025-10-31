@@ -54,7 +54,18 @@ def erodir_imagem(imagem_binaria, elemento_estruturante):
                 y - padding_y : y + padding_y + 1, x - padding_x : x + padding_x + 1
             ]
 
-            if np.all(vizinhanca[ee == 1]):
+            # Verifica manualmente se TODOS os pixels (onde EE=1) são 1
+            todos_iguais = True
+            for i in range(altura_ee):
+                for j in range(largura_ee):
+                    if ee[i, j] == 1:  # Apenas verifica onde o EE é 1
+                        if vizinhanca[i, j] != 1:
+                            todos_iguais = False
+                            break
+                if not todos_iguais:
+                    break
+
+            if todos_iguais:
                 imagem_erodida[y, x] = 1
 
     print("Erosao concluída.")
@@ -85,7 +96,18 @@ def dilatar_imagem(imagem_binaria, elemento_estruturante):
                 y - padding_y : y + padding_y + 1, x - padding_x : x + padding_x + 1
             ]
 
-            if np.any(vizinhanca[ee == 1]):
+            # Verifica manualmente se ALGUM pixel (onde EE=1) é 1
+            algum_igual = False
+            for i in range(altura_ee):
+                for j in range(largura_ee):
+                    if ee[i, j] == 1:  # Apenas verifica onde o EE é 1
+                        if vizinhanca[i, j] == 1:
+                            algum_igual = True
+                            break
+                if algum_igual:
+                    break
+
+            if algum_igual:
                 imagem_dilatada[y, x] = 1
 
     print("Dilatação concluída.")
@@ -110,10 +132,10 @@ def fechar_imagem(imagem_binaria, ee_selecionado):
     imagem_fechamento = np.zeros_like(imagem_binaria)
 
     # Primeiro passo (Erodir imagem)
-    imagem_fechamento = erodir_imagem(imagem_binaria, ee_selecionado)
+    imagem_fechamento = dilatar_imagem(imagem_binaria, ee_selecionado)
 
     # Segundo passo (dilatar imagem)
-    imagem_fechamento = dilatar_imagem(imagem_fechamento, ee_selecionado)
+    imagem_fechamento = erodir_imagem(imagem_fechamento, ee_selecionado)
 
     return imagem_fechamento
 
@@ -133,6 +155,22 @@ def main():
     # Define os Elementos Estruturantes (EE) disponíveis
     ELEMENTOS_ESTRUTURANTES = {
         "cruz": np.array([[0, 1, 0], [1, 1, 1], [0, 1, 0]], dtype=np.uint8),
+        "cruz5x5": np.array(
+            [
+                [0, 0, 1, 0, 0],
+                [0, 1, 1, 1, 0],
+                [1, 1, 1, 1, 1],
+                [
+                    0,
+                    1,
+                    1,
+                    1,
+                    0,
+                ],
+                [0, 0, 1, 0, 0],
+            ],
+            dtype=np.uint8,
+        ),
         "quadrado": np.ones((3, 3), dtype=np.uint8),
         "quadrado5x5": np.ones((5, 5), dtype=np.uint8),
     }
